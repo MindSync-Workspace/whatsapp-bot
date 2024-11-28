@@ -89,7 +89,7 @@ async function handleGetNotes(msg: WAWebJS.Message, client: Client) {
       return "Tidak ada note yang bisa ditampilkan";
     }
 
-    let stringNotes = "";
+    let stringNotes = "List note kamu\n";
     await data.data.map(
       (note: any, index: number) =>
         (stringNotes += `\n${index + 1}. ${note.text}`)
