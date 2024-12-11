@@ -2,13 +2,13 @@ import WAWebJS, { Client } from "whatsapp-web.js";
 import { commands } from "./utils/command";
 import { axiosInstance } from "./utils/axiosInstance";
 import { AxiosError } from "axios";
-import MessageTypes from "whatsapp-web.js";
 import { Buffer } from "buffer";
-import path from "path";
 import fs from "fs";
 import FormData from "form-data";
+import { supportedExtension } from "./utils/supportedExtension";
 
 // const prefixArray = commands.map((command) => command.prefix.split("*")[1]);
+
 export async function handleMessage(msg: WAWebJS.Message, client: Client) {
   const { body } = msg;
 
@@ -47,7 +47,14 @@ async function handleUploadDocument(msg: WAWebJS.Message, client: Client) {
 
   const number = msg.from.split("@")[0];
   const fileTitle = media.filename?.split(".")[0] || "document";
+  const fileExtension = media.mimetype?.split("/")[1] || "unknown";
+
   const filePath = `./media/${media.filename!}`;
+  console.log(fileExtension);
+
+  if (!supportedExtension.includes(fileExtension)) {
+    return "Maaf untuk sekarang hanya file yang berekstensi *pdf|docx|pptx|txt|md* yang didukung";
+  }
 
   try {
     const buffer = Buffer.from(media.data, "base64");
@@ -72,7 +79,6 @@ async function handleUploadDocument(msg: WAWebJS.Message, client: Client) {
       "/documents/whatsapps/upload",
       form
     );
-    msg.react("1️⃣");
 
     msg.react("✅");
     return `Dokumen dengan nama: *${fileTitle}* berhasil ditambahkan`;
