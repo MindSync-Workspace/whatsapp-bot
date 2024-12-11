@@ -41,15 +41,15 @@ function handleHelp(msg: string) {
 }
 
 async function handleUploadDocument(msg: WAWebJS.Message, client: Client) {
+  msg.react("⏱️");
+
+  const media = await msg.downloadMedia();
+
+  const number = msg.from.split("@")[0];
+  const fileTitle = media.filename?.split(".")[0] || "document";
+  const filePath = `./media/${media.filename!}`;
+
   try {
-    msg.react("⏱️");
-    let media = await msg.downloadMedia(); // Download media dari pesan
-    const number = msg.from.split("@")[0]; // Ambil nomor pengirim
-    const fileTitle = media.filename?.split(".")[0] || "document";
-    const fileExtension = media.mimetype?.split("/")[1] || "unknown";
-    const filePath = `./media/${media.filename!}`;
-    client.sendMessage(msg.from, "Tunggu,dokumen sedang diupload...");
-    // Simpan file ke filesystem
     const buffer = Buffer.from(media.data, "base64");
     const stream = fs.createWriteStream(filePath);
     stream.write(buffer);
@@ -61,6 +61,8 @@ async function handleUploadDocument(msg: WAWebJS.Message, client: Client) {
       stream.on("error", reject);
     });
 
+    await client.sendMessage(msg.from, "Tunggu,dokumen sedang diupload...");
+
     const form = new FormData();
     form.append("file", fs.createReadStream(filePath));
     form.append("title", fileTitle); // Tambahkan title
@@ -71,6 +73,18 @@ async function handleUploadDocument(msg: WAWebJS.Message, client: Client) {
       form
     );
     msg.react("1️⃣");
+
+    msg.react("✅");
+    return `Dokumen dengan nama: *${fileTitle}* berhasil ditambahkan`;
+  } catch (error) {
+    msg.react("❌");
+    if (error instanceof AxiosError) {
+      await client.sendMessage(msg.from, "Gagal mengupload dokumen");
+      return error.response?.data?.detail[0];
+    }
+
+    return "Fitur sedang error, segera diperbaiki";
+  } finally {
     fs.unlink(filePath, (err) => {
       if (err) {
         console.error(`Gagal menghapus file: ${filePath}`, err);
@@ -78,16 +92,6 @@ async function handleUploadDocument(msg: WAWebJS.Message, client: Client) {
         console.log(`File berhasil dihapus: ${filePath}`);
       }
     });
-
-    msg.react("✅");
-    return `Dokumen dengan nama: *${fileTitle}* berhasil ditambahkan`;
-  } catch (error) {
-    msg.react("❌");
-    if (error instanceof AxiosError) {
-      console.log(error.response?.data);
-      return error.response?.data?.detail[0];
-    }
-    return "Fitur sedang error, segera diperbaiki";
   }
 }
 

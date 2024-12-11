@@ -7,7 +7,6 @@ import {
 import qrcode from "qrcode-terminal";
 import { handleMessage } from "./src";
 
-
 const port = 3005;
 
 const client = new Client({
@@ -18,7 +17,9 @@ const client = new Client({
       "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
   },
   puppeteer: {
-    executablePath: "/usr/bin/chromium", 
+    executablePath:
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    // "/usr/bin/chromium",
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   },
