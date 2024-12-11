@@ -50,11 +50,11 @@ async function handleUploadDocument(msg: WAWebJS.Message, client: Client) {
     const filePath = `./media/${media.filename!}`;
     client.sendMessage(msg.from, "Tunggu,dokumen sedang diupload...");
     // Simpan file ke filesystem
-    msg.react("3️⃣");
     const buffer = Buffer.from(media.data, "base64");
     const stream = fs.createWriteStream(filePath);
     stream.write(buffer);
     stream.end();
+    msg.react("3️⃣");
 
     await new Promise((resolve, reject) => {
       stream.on("finish", resolve);

@@ -18,4 +18,8 @@ export const commands = [
     description:
       "Melakukan login melalui secret key,anda dapat menemuka secret key di pengaturan yang terdapat di aplikasi",
   },
+  {
+    prefix: "*.chat <teks-chat>*",
+    description: "Chat dengan dokumen",
+  },
 ];
