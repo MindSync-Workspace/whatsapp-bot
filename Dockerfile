@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:18-bullseye-slim
+FROM node:18-bullseye-slim
 
 # Install Chromium for ARM
 RUN apt-get update && apt-get install -y chromium
