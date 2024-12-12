@@ -135,8 +135,8 @@ async function handleConnectWhatsapp(msg: WAWebJS.Message, client: Client) {
       number: number,
       secret_key: secret_key.trim(),
     });
-
     msg.react("✅");
+
     return data.meta.message;
   } catch (error) {
     msg.react("❌");
